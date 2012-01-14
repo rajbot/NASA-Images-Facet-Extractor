@@ -10,7 +10,7 @@ def build_dict():
         k = k.strip()
         if not k:
             continue
-        words_in_key = len(k.split(' '))
+        words_in_key = k.count(' ') + 1
         if words_in_key > max_words_in_key:
             max_words_in_key = words_in_key
         dictionary[k] = v.strip()
