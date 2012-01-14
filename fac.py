@@ -48,6 +48,8 @@ def get_facets(string, dictionary, longest_key):
     {'Ain al Rami': 'What --'}
     >>> get_facets('Ain Ain al Rami', d, longest_key)
     {'Ain': 'What --', 'Ain al Rami': 'What --'}
+    >>> get_facets('Ain al Rami Ain', d, longest_key)
+    {'Ain': 'What --', 'Ain al Rami': 'What --'}
 
     >>> get_facets('Venus', d, longest_key)
     {'Venus': 'Where --'}
