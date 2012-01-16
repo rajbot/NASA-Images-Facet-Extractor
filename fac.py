@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import string
 
 def build_dict():
     facet_file = 'facets.txt'
@@ -7,7 +8,7 @@ def build_dict():
     max_words_in_key = 0
     for facet in facet_list:
         k,v = facet.split(',')[0], facet.split(',')[-1]
-        k = k.strip()
+        k = k.strip().lower()
         if not k:
             continue
         words_in_key = len(k.split(' '))
@@ -29,6 +30,10 @@ def get_phrase(words, phrase_length, start_pos):
     s = ''
     for i in range(phrase_length):
         s += words[start_pos+i] + ' '
+        exclude =set(['!', '#', '"', '%', '$', "'", '&', ')', '(', '+', '*', ',',
+                      '/', '.', ';', ':', '=', '<', '?', '>', '@', '[', ']', '\\',
+                      '^', '`', '{', '}', '|', '~'])
+        s = ''.join(ch for ch in s if ch not in exclude)
     return s[:-1]
 
 def get_facets(string, dictionary, longest_key):
@@ -58,6 +63,9 @@ def get_facets(string, dictionary, longest_key):
     {'Virgo': 'What --'}
     >>> get_facets('Virgo Stellar Stream', d, longest_key)
     {'Virgo Stellar Stream': 'Where --'}
+
+    >>> get_facets('Virgo. STS-123, STS-1!', d, longest_key)
+    {'Virgo': 'What --', 'STS-123': 'What --', 'STS-1': 'What --'}
     """
     faceted = {}
     words = string.split()
@@ -74,10 +82,10 @@ def get_facets(string, dictionary, longest_key):
             #print ' checking phrase length ' + str(phrase_length)
 
             phrase = get_phrase(words, phrase_length, pos)
-            #print ' got phrase ' + phrase
-            if phrase in dictionary:
+            print ' got phrase ' + phrase
+            if phrase.lower() in dictionary:
                 #print '  phrase matched!'
-                found_phrase = phrase
+                found_phrase = phrase.lower()
                 break
             phrase_length -= 1
 
@@ -94,10 +102,10 @@ def get_facets(string, dictionary, longest_key):
 def main():
     #t = open('text','rb').read()
     facet_dict, longest_key = build_dict()
-    facets = get_facets(' STS-1 STS-123 ', facet_dict, longest_key)
+    facets = get_facets('Virgo. sts-123, STS-1!', facet_dict, longest_key)
     print facets
 
 if __name__ == "__main__":
-    #main()
-    import doctest
-    doctest.testmod()
+    main()
+    #import doctest
+    #doctest.testmod()
