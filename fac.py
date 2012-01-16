@@ -40,32 +40,32 @@ def get_facets(string, dictionary, longest_key):
     """extract facets from string
     >>> d, longest_key = build_dict()
     >>> get_facets(' STS-1 STS-123 ', d, longest_key)
-    {'STS-123': 'What --', 'STS-1': 'What --'}
+    {'sts-123': 'What -- STS-123', 'sts-1': 'What -- STS-1'}
 
     >>> get_facets('STS-1', d, longest_key)
-    {'STS-1': 'What --'}
+    {'sts-1': 'What -- STS-1'}
     >>> get_facets('STS-123', d, longest_key)
-    {'STS-123': 'What --'}
+    {'sts-123': 'What -- STS-123'}
 
     >>> get_facets('Ain', d, longest_key)
-    {'Ain': 'What --'}
+    {'ain': 'What -- Ain'}
     >>> get_facets('Ain al Rami', d, longest_key)
-    {'Ain al Rami': 'What --'}
+    {'ain al rami': 'What -- Ain al Rami'}
     >>> get_facets('Ain Ain al Rami', d, longest_key)
-    {'Ain': 'What --', 'Ain al Rami': 'What --'}
+    {'ain': 'What -- Ain', 'ain al rami': 'What -- Ain al Rami'}
 
     >>> get_facets('Venus', d, longest_key)
-    {'Venus': 'Where --'}
+    {'venus': 'Where -- Venus'}
     >>> get_facets('Venus Express', d, longest_key)
-    {'Venus Express': 'What --'}
+    {'venus express': 'What -- Venus Express'}
 
     >>> get_facets('Virgo', d, longest_key)
-    {'Virgo': 'What --'}
+    {'virgo': 'What -- Virgo'}
     >>> get_facets('Virgo Stellar Stream', d, longest_key)
-    {'Virgo Stellar Stream': 'Where --'}
+    {'virgo stellar stream': 'Where -- Virgo Stellar Stream'}
 
     >>> get_facets('Virgo. STS-123, STS-1!', d, longest_key)
-    {'Virgo': 'What --', 'STS-123': 'What --', 'STS-1': 'What --'}
+    {'virgo': 'What -- Virgo', 'sts-123': 'What -- STS-123', 'sts-1': 'What -- STS-1'}
     """
     faceted = {}
     words = string.split()
@@ -82,7 +82,7 @@ def get_facets(string, dictionary, longest_key):
             #print ' checking phrase length ' + str(phrase_length)
 
             phrase = get_phrase(words, phrase_length, pos)
-            print ' got phrase ' + phrase
+            #print ' got phrase ' + phrase
             if phrase.lower() in dictionary:
                 #print '  phrase matched!'
                 found_phrase = phrase.lower()
@@ -106,6 +106,6 @@ def main():
     print facets
 
 if __name__ == "__main__":
-    main()
-    #import doctest
-    #doctest.testmod()
+    #main()
+    import doctest
+    doctest.testmod()
