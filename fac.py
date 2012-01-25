@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import string
+#import string
+import re
 
 def build_dict():
     facet_file = 'facets.txt'
@@ -28,11 +29,11 @@ def get_phrase(words, phrase_length, start_pos):
     'five word'
     """
     s = ''
+    exclude =set(['!', '#', '"', '%', '$', "'", '&', ')', '(', '+', '*', ',',
+                  '/', '.', ';', ':', '=', '<', '?', '>', '@', '[', ']', '\\',
+                  '^', '`', '{', '}', '|', '~'])
     for i in range(phrase_length):
         s += words[start_pos+i] + ' '
-        exclude =set(['!', '#', '"', '%', '$', "'", '&', ')', '(', '+', '*', ',',
-                      '/', '.', ';', ':', '=', '<', '?', '>', '@', '[', ']', '\\',
-                      '^', '`', '{', '}', '|', '~'])
         s = ''.join(ch for ch in s if ch not in exclude)
     return s[:-1]
 
