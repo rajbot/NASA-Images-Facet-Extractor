@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#import string
+import re
 
 def build_dict():
     facet_file = 'facets.txt'
@@ -7,7 +9,7 @@ def build_dict():
     max_words_in_key = 0
     for facet in facet_list:
         k,v = facet.split(',')[0], facet.split(',')[-1]
-        k = k.strip()
+        k = k.strip().lower()
         if not k:
             continue
         words_in_key = k.count(' ') + 1
@@ -27,39 +29,44 @@ def get_phrase(words, phrase_length, start_pos):
     'five word'
     """
     s = ''
+    exclude =set(['!', '#', '"', '%', '$', "'", '&', ')', '(', '+', '*', ',',
+                  '/', '.', ';', ':', '=', '<', '?', '>', '@', '[', ']', '\\',
+                  '^', '`', '{', '}', '|', '~'])
     for i in range(phrase_length):
         s += words[start_pos+i] + ' '
+        s = ''.join(ch for ch in s if ch not in exclude)
     return s[:-1]
 
 def get_facets(string, dictionary, longest_key):
     """extract facets from string
     >>> d, longest_key = build_dict()
     >>> get_facets(' STS-1 STS-123 ', d, longest_key)
-    {'STS-123': 'What --', 'STS-1': 'What --'}
+    {'sts-123': 'What -- STS-123', 'sts-1': 'What -- STS-1'}
 
     >>> get_facets('STS-1', d, longest_key)
-    {'STS-1': 'What --'}
+    {'sts-1': 'What -- STS-1'}
     >>> get_facets('STS-123', d, longest_key)
-    {'STS-123': 'What --'}
+    {'sts-123': 'What -- STS-123'}
 
     >>> get_facets('Ain', d, longest_key)
-    {'Ain': 'What --'}
+    {'ain': 'What -- Ain'}
     >>> get_facets('Ain al Rami', d, longest_key)
-    {'Ain al Rami': 'What --'}
+    {'ain al rami': 'What -- Ain al Rami'}
     >>> get_facets('Ain Ain al Rami', d, longest_key)
-    {'Ain': 'What --', 'Ain al Rami': 'What --'}
-    >>> get_facets('Ain al Rami Ain', d, longest_key)
-    {'Ain': 'What --', 'Ain al Rami': 'What --'}
+    {'ain': 'What -- Ain', 'ain al rami': 'What -- Ain al Rami'}
 
     >>> get_facets('Venus', d, longest_key)
-    {'Venus': 'Where --'}
+    {'venus': 'Where -- Venus'}
     >>> get_facets('Venus Express', d, longest_key)
-    {'Venus Express': 'What --'}
+    {'venus express': 'What -- Venus Express'}
 
     >>> get_facets('Virgo', d, longest_key)
-    {'Virgo': 'What --'}
+    {'virgo': 'What -- Virgo'}
     >>> get_facets('Virgo Stellar Stream', d, longest_key)
-    {'Virgo Stellar Stream': 'Where --'}
+    {'virgo stellar stream': 'Where -- Virgo Stellar Stream'}
+
+    >>> get_facets('Virgo. STS-123, STS-1!', d, longest_key)
+    {'virgo': 'What -- Virgo', 'sts-123': 'What -- STS-123', 'sts-1': 'What -- STS-1'}
     """
     faceted = {}
     words = string.split()
@@ -77,9 +84,9 @@ def get_facets(string, dictionary, longest_key):
 
             phrase = get_phrase(words, phrase_length, pos)
             #print ' got phrase ' + phrase
-            if phrase in dictionary:
+            if phrase.lower() in dictionary:
                 #print '  phrase matched!'
-                found_phrase = phrase
+                found_phrase = phrase.lower()
                 break
             phrase_length -= 1
 
@@ -96,7 +103,7 @@ def get_facets(string, dictionary, longest_key):
 def main():
     #t = open('text','rb').read()
     facet_dict, longest_key = build_dict()
-    facets = get_facets(' STS-1 STS-123 ', facet_dict, longest_key)
+    facets = get_facets('Virgo. sts-123, STS-1!', facet_dict, longest_key)
     print facets
 
 if __name__ == "__main__":
